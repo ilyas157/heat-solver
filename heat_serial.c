@@ -7,6 +7,7 @@
 #define IDX(i, j) ((i) * (N + 2) + (j))
 
 void init_grid(double *u, int setup);
+void write_grid(const double *u, const char *name);
 
 int main(int argc, char **argv)
 {
@@ -25,6 +26,12 @@ int main(int argc, char **argv)
     int max_iter = 100000;
     int iter = 0;
     double max_diff;
+    int count = 0;
+    char name[64];
+
+    sprintf(name, "./snaps/snap_%04d.txt", count);
+    write_grid(old, name);
+    count++;
 
     clock_t start = clock();
     do
@@ -50,10 +57,18 @@ int main(int argc, char **argv)
         old = new;
         new = temp;
 
+        // snapshots
+        if (iter % 200 == 0)
+        {
+            sprintf(name, "./snaps/snap_%04d.txt", count);
+            write_grid(old, name);
+            count++;
+        }
+
     } while (max_diff > tol && iter < max_iter);
     clock_t end = clock();
     double elapsed = (double)(end - start) / CLOCKS_PER_SEC;
-    
+
     printf("timing= %fs\n", elapsed);
     printf("iteration count= %d\n", iter);
     printf("final max_diff= %e\n", max_diff);
@@ -65,22 +80,9 @@ int main(int argc, char **argv)
     }
     printf("\n");
 
-    FILE *fp = fopen("data.txt", "w");
-    if (fp == NULL)
-    {
-        perror("fopen");
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 0; i < N + 2; i++)
-    {
-        for (int j = 0; j < N + 2; j++)
-        {
-            fprintf(fp, "%f ", old[IDX(i, j)]);
-        }
-        fprintf(fp, "\n");
-    }
-
-    fclose(fp);
+    sprintf(name, "./snaps/snap_%04d.txt", count);
+    write_grid(old, name);
+    write_grid(old, "data.txt");
 
     free(old);
     free(new);
@@ -110,4 +112,23 @@ void init_grid(double *u, int setup)
         fprintf(stderr, "Unknown setup %d\n", setup);
         exit(EXIT_FAILURE);
     }
+}
+
+void write_grid(const double *u, const char *name)
+{
+    FILE *snap = fopen(name, "w");
+    if (snap == NULL)
+    {
+        perror(name);
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < N + 2; i++)
+    {
+        for (int j = 0; j < N + 2; j++)
+        {
+            fprintf(snap, "%f ", u[IDX(i, j)]);
+        }
+        fprintf(snap, "\n");
+    }
+    fclose(snap);
 }

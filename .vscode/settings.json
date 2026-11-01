@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.ejs": "html",
+    "*.dbclient-js": "javascript",
+    "typeinfo": "c"
+  }
+}
