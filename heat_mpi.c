@@ -3,7 +3,7 @@
 #include <mpi.h>
 #include <math.h>
 
-#define N 100
+#define N 400
 #define IDX(i, j) ((i) * (N + 2) + (j))
 
 void init_grid(double *u, int local_n, int rank, int setup);
@@ -45,13 +45,14 @@ int main(int argc, char **argv)
     int iter = 0;
     double local_max_diff;
     double max_diff;
-    int count = 0;
-    char name[64];
 
     double *buf = NULL;
     int counts[size];
     int displs[size];
+    double elapsed;
 
+    MPI_Barrier(MPI_COMM_WORLD);
+    double t0 = MPI_Wtime();
     do
     {
         local_max_diff = 0.0;
@@ -76,7 +77,9 @@ int main(int argc, char **argv)
 
         MPI_Allreduce(&local_max_diff, &max_diff, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
     } while (max_diff > tol && iter < max_iter);
+    double t1 = MPI_Wtime() - t0;
 
+    MPI_Reduce(&t1, &elapsed, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
     if (rank == 0)
     {
         buf = malloc((N + 2) * (N + 2) * sizeof *buf);
@@ -102,6 +105,7 @@ int main(int argc, char **argv)
             }
             displs[i] *= (N + 2);
         }
+        printf("timing= %fs\n", elapsed);
         printf("iteration count= %d\n", iter);
         printf("final max_diff= %e\n", max_diff);
     }
