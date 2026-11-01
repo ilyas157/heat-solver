@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #define N 100
 #define IDX(i, j) ((i) * (N + 2) + (j))
@@ -25,6 +26,7 @@ int main(int argc, char **argv)
     int iter = 0;
     double max_diff;
 
+    clock_t start = clock();
     do
     {
         max_diff = 0.0;
@@ -49,7 +51,10 @@ int main(int argc, char **argv)
         new = temp;
 
     } while (max_diff > tol && iter < max_iter);
-
+    clock_t end = clock();
+    double elapsed = (double)(end - start) / CLOCKS_PER_SEC;
+    
+    printf("timing= %fs\n", elapsed);
     printf("iteration count= %d\n", iter);
     printf("final max_diff= %e\n", max_diff);
 
