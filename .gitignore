@@ -1,3 +1,5 @@
 snaps/
 *.txt
 heat_serial
+heat_mpi
+.vscode/

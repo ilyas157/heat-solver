@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-T = np.loadtxt("data.txt")
+T = np.loadtxt("mpi_data.txt")
 print(T.shape)
 
 
