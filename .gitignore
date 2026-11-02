@@ -3,3 +3,5 @@ snaps/
 heat_serial
 heat_mpi
 .vscode/
+*.out
+*.error
