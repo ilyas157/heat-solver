@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
-T = np.loadtxt("mpi_data.txt")
+
+file = sys.argv[1] if len(sys.argv) >1 else "data.txt"
+T = np.loadtxt(file)
 print(T.shape)
 
 
