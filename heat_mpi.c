@@ -18,16 +18,19 @@ int main(int argc, char **argv)
     // defaults
     int N = 100;
     int save_output = 1;
+    int max_iter = 100000;
 
     if (argc > 1)
         N = atoi(argv[1]);
     if (argc > 2)
         save_output = atoi(argv[2]);
+    if (argc > 3)
+        max_iter = atoi(argv[3]);
 
-    if (N <= 0 || (save_output != 0 && save_output != 1))
+    if (N <= 0 || (save_output != 0 && save_output != 1) || max_iter <= 0)
     {
         if (rank == 0)
-            fprintf(stderr, "usage: %s N save_output(0 or 1)\n", argv[0]);
+            fprintf(stderr, "usage: %s N save_output(0 or 1) max_iter(>0)\n", argv[0]);
         MPI_Finalize();
         return EXIT_FAILURE;
     }
@@ -56,7 +59,6 @@ int main(int argc, char **argv)
     int down = (rank != size - 1) ? rank + 1 : MPI_PROC_NULL;
 
     double tol = 1e-4;
-    int max_iter = 100000;
     int iter = 0;
     double local_max_diff;
     double max_diff;
